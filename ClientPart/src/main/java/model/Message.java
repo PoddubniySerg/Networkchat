@@ -26,26 +26,6 @@ public class Message implements IMessage {
         this.localDateTime = localDateTime;
     }
 
-    public static List<Message> getMessagesFromJson(String jsonStr, ILogger logger) {
-        List<Message> messageList = new ArrayList<>();
-        if (jsonStr != null) {
-            JSONArray jsonArray;
-            try {
-                jsonArray = (JSONArray) new JSONParser().parse(jsonStr);
-                Gson gson = new GsonBuilder().create();
-                for (Object object : jsonArray) {
-                    JSONObject jsonObject = (JSONObject) object;
-                    Message message = gson.fromJson(jsonObject.toJSONString(), Message.class);
-                    messageList.add(message);
-                }
-            } catch (ParseException exception) {
-                logger.log(exception.getMessage());
-                throw new RuntimeException(exception);
-            }
-        }
-        return messageList;
-    }
-
     @Override
     public String getTitle() {
         return this.title;
@@ -64,5 +44,15 @@ public class Message implements IMessage {
     @Override
     public String toString() {
         return this.title + "\n" + this.content + "\n" + this.localDateTime + "\n";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Message)) return false;
+        Message message = (Message) obj;
+        return this.title.equals(message.getTitle())
+                && this.content.equals(message.getContent())
+                && this.localDateTime.equals(message.getDateTime());
     }
 }

@@ -20,41 +20,17 @@ public class FileLogger implements ILogger {
     }
 
     @Override
-    public void log(IMessage message) {
+    public void log(IMessage message) throws IOException {
         synchronized (this.path) {
-            try {
-                if (!Files.exists(this.path)) {
-                    Files.createFile(this.path);
-                }
-                if (Files.exists(this.path) && Files.isWritable(this.path)) {
-                    Files.write(this.path, Collections.singleton(message.getTitle()), StandardOpenOption.APPEND);
-                    Files.write(this.path, Collections.singleton(message.getContent()), StandardOpenOption.APPEND);
-                    Files.write(this.path, Collections.singleton(message.getDateTime()), StandardOpenOption.APPEND);
-                    Files.write(this.path, Collections.singleton(""), StandardOpenOption.APPEND);
-                }
-            } catch (IOException exception) {
-                this.log(exception.getMessage());
-                throw new RuntimeException(exception);
-            }
-        }
-    }
-
-    @Override
-    public void log(String message) {
-        try {
-            String newMessage = message +
-                    "\n" +
-                    LocalDateTime.now() +
-                    "\n";
             if (!Files.exists(this.path)) {
                 Files.createFile(this.path);
             }
             if (Files.exists(this.path) && Files.isWritable(this.path)) {
-                Files.write(this.path, Collections.singleton(newMessage), StandardOpenOption.APPEND);
+                Files.write(this.path, Collections.singleton(message.getTitle()), StandardOpenOption.APPEND);
+                Files.write(this.path, Collections.singleton(message.getContent()), StandardOpenOption.APPEND);
+                Files.write(this.path, Collections.singleton(message.getDateTime()), StandardOpenOption.APPEND);
+                Files.write(this.path, Collections.singleton(""), StandardOpenOption.APPEND);
             }
-        } catch (IOException exception) {
-            this.log(exception.getMessage());
-            throw new RuntimeException(exception);
         }
     }
 }

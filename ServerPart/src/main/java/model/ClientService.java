@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientService {
     private static final String EXIT_COMMAND = "/exit";
@@ -52,6 +54,11 @@ public class ClientService {
 
     private String authorization(BufferedReader in, PrintWriter out) {
         try {
+            List<String> request = new ArrayList<>();
+            request.add(in.readLine());
+            while (in.ready()) {
+                request.add(in.readLine());
+            }
             while (true) {
                 out.println("Write login to enter chat, or '" +
                         EXIT_COMMAND +
@@ -122,26 +129,17 @@ public class ClientService {
     private void inputMessage(BufferedReader in, String username) {
         try {
             this.storage.getUser(username).setUserStatusOnline(true);
-            this.messageHandler.inputMessage(
-                    "is attached to chat"
-                    , username
-                    , LocalDateTime.now().toString()
-                    , true
-            );
-            String inputStr;
+            String command;
+            String content;
+            String dateTime;
             while (!this.socket.isClosed()) {
-                inputStr = in.readLine();
-                if (inputStr == null || inputStr.equals(EXIT_COMMAND)) {
-                    this.storage.getUser(username).setUserStatusOnline(false);
-                    this.messageHandler.inputMessage(
-                            "leave chat"
-                            , username
-                            , LocalDateTime.now().toString()
-                            , true
-                    );
-                    return;
+                command = in.readLine();
+                content = in.readLine();
+                dateTime = in.readLine();
+                if (!content.isEmpty()) {
+                    this.messageHandler.inputMessage(content, username, dateTime, false);
                 }
-                if (!inputStr.isEmpty()) this.messageHandler.inputMessage(inputStr, username, in.readLine(), false);
+                if (command == null || command.equals(EXIT_COMMAND)) return;
             }
         } catch (IOException exception) {
             this.logger.log(exception.getMessage());
