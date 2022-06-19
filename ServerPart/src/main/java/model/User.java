@@ -82,4 +82,11 @@ public class User {
     public void newMessage(IMessage message) {
         this.messages.add(new ChatMessage(message.getTitle(), message.getContent()));
     }
+
+    public void newMessage(String jsonMessage) throws ParseException {
+        if (jsonMessage != null && !jsonMessage.isEmpty()) {
+            ChatMessage message = ChatMessage.getMessageFromJson(jsonMessage);
+            if (message != null) this.messages.add(message);
+        }
+    }
 }

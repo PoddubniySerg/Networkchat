@@ -7,4 +7,6 @@ public interface IMessage {
     String getContent();
 
     String getDateTime();
+
+    String getJson();
 }

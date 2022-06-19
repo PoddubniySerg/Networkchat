@@ -8,5 +8,7 @@ public interface ISettings {
 
     String getPathUsersFile();
 
+    String getPathUsersMessages();
+
     ISettings getSettingsFromJson(String json);
 }

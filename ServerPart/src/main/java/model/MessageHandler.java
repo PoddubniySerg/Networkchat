@@ -1,5 +1,6 @@
 package model;
 
+import org.json.simple.parser.ParseException;
 import services.*;
 
 import java.io.IOException;
@@ -19,17 +20,17 @@ public class MessageHandler implements IMessageHendler {
     }
 
     @Override
-    public void start(IClientService clientService) throws IOException {
-        String username = this.authorization(clientService);
+    public void start(IClientService clientService, ISettings settings) throws IOException, ParseException {
+        String username = this.authorization(clientService, settings);
         if (username != null && !username.equals(CommandsList.EXIT.command())) {
-            Thread outThread = new Thread(() -> this.sendMessage(clientService, username));
+            Thread outThread = new Thread(() -> this.sendMessage(clientService, username, settings));
             outThread.start();
-            this.inputMessage(clientService, username);
+            this.inputMessage(clientService, username, settings);
             outThread.interrupt();
         }
     }
 
-    private String authorization(IClientService clientService) throws IOException {
+    private String authorization(IClientService clientService, ISettings settings) throws IOException, ParseException {
         while (true) {
             IMessage request = clientService.getClientRequest(new ChatMessageFactory());
             if (request.getTitle().equals(CommandsList.AUTHORIZATION.command())) {
@@ -49,8 +50,8 @@ public class MessageHandler implements IMessageHendler {
                     );
                     clientService.sendResponse(this.startMessage);
                 } else {
-                    this.registrationNewUser(clientService, login.getContent());
-                    this.successfulAuthorization(clientService, login.getContent());
+                    this.registrationNewUser(clientService, login.getContent(), settings);
+                    this.successfulAuthorization(clientService, login.getContent(), settings);
                     return login.getContent();
                 }
             } else {
@@ -61,19 +62,20 @@ public class MessageHandler implements IMessageHendler {
                     );
                     clientService.sendResponse(this.startMessage);
                 } else {
-                    if (this.isAttachedToChat(clientService, request.getContent())) {
+                    if (this.isAttachedToChat(clientService, request.getContent(), settings)) {
                         return request.getContent();
                     } else {
                         clientService.sendResponse(
                                 new ChatMessage(CommandsList.INFO_CONTENT.command(), "Unknown login or password")
                         );
+                        clientService.sendResponse(this.startMessage);
                     }
                 }
             }
         }
     }
 
-    private void registrationNewUser(IClientService clientService, String login) {
+    private void registrationNewUser(IClientService clientService, String login, ISettings settings) throws IOException {
         clientService.sendResponse(
                 new ChatMessage(
                         CommandsList.REGISTRATION.command(),
@@ -85,50 +87,52 @@ public class MessageHandler implements IMessageHendler {
         this.storage.setUserStatusOnline(login, true);
         this.storage.newMessage(
                 login,
-                new ChatMessage(login, "New user in chat. Welcome!")
+                new ChatMessage(login, "New user in chat. Welcome!"),
+                settings
         );
     }
 
-    private boolean isAttachedToChat(IClientService clientService, String login) throws IOException {
+    private boolean isAttachedToChat(IClientService clientService, String login, ISettings settings) throws IOException, ParseException {
         clientService.sendResponse(
                 new ChatMessage(CommandsList.AUTHORIZATION.command(), "Enter password")
         );
 
         if (this.storage.passwordIsValid(login, clientService.getClientRequest(login, new ChatMessageFactory()).getContent())) {
-            this.successfulAuthorization(clientService, login);
+            this.successfulAuthorization(clientService, login, settings);
             return true;
         }
         return false;
     }
 
-    private void successfulAuthorization(IClientService clientService, String login) {
+    private void successfulAuthorization(IClientService clientService, String login, ISettings settings) throws IOException, ParseException {
         clientService.sendResponse(
                 new ChatMessage(
                         CommandsList.VALID_COMMAND.command(),
                         CommandsList.VALID_COMMAND.command()));
         this.storage.setUserStatusOnline(login, true);
-        this.storage.newMessage(login, new ChatMessage(login, "attached to chat"));
+        this.storage.messageSyncr(login, settings);
+        this.storage.newMessage(login, new ChatMessage(login, "attached to chat"), settings);
     }
 
-    private void inputMessage(IClientService clientService, String login) throws IOException {
+    private void inputMessage(IClientService clientService, String login, ISettings settings) throws IOException {
         while (!clientService.serverIsClosed()) {
             IMessage message = clientService.getClientRequest(login, new ChatMessageFactory());
-            if (message != null && !message.getTitle().equals(CommandsList.EXIT.command()) && !message.getContent().isEmpty()) {
-                this.storage.newMessage(login, message);
+            if (message != null && !message.getTitle().equals(CommandsList.EXIT.command())) {
+                if (!message.getContent().isEmpty()) this.storage.newMessage(login, message, settings);
             } else {
-                this.storage.newMessage(login, new ChatMessage(login, "left chat"));
+                this.storage.newMessage(login, new ChatMessage(login, "left chat"), settings);
                 this.storage.setUserStatusOnline(login, false);
-                this.storage.newMessage(login, message);
+                this.storage.newMessage(login, message, settings);
                 break;
             }
         }
 
     }
 
-    private void sendMessage(IClientService clientService, String login) {
+    private void sendMessage(IClientService clientService, String login, ISettings settings) {
         while (!Thread.currentThread().isInterrupted()) {
             while (!this.storage.messageListIsEmpty(login)) {
-                clientService.sendResponse(this.storage.nextMessage(login));
+                clientService.sendResponse(this.storage.nextMessage(login, settings));
             }
         }
     }

@@ -11,12 +11,14 @@ public class Settings implements ISettings {
     private final int port;
     private final String pathLogFile;
     private final String pathUsersFile;
+    private final String pathUsersMessages;
 
     public Settings(String json) {
         ISettings settings = this.getSettingsFromJson(json);
         this.port = settings.getPort();
         this.pathLogFile = settings.getPathLogFile();
         this.pathUsersFile = settings.getPathUsersFile();
+        this.pathUsersMessages = settings.getPathUsersMessages();
     }
 
     @Override
@@ -32,6 +34,11 @@ public class Settings implements ISettings {
     @Override
     public String getPathUsersFile() {
         return this.pathUsersFile;
+    }
+
+    @Override
+    public String getPathUsersMessages() {
+        return this.pathUsersMessages;
     }
 
     @Override

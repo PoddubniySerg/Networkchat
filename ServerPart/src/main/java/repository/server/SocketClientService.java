@@ -1,6 +1,7 @@
 package repository.server;
 
 import model.CommandsList;
+import org.json.simple.parser.ParseException;
 import services.*;
 
 import java.io.BufferedReader;
@@ -28,15 +29,15 @@ public class SocketClientService implements IClientService {
         this.socket = socket;
     }
 
-    public void start() {
+    public void start(ISettings settings) {
         try (
                 BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
                 PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true, StandardCharsets.UTF_8)
         ) {
             this.in = in;
             this.out = out;
-            messageHendler.start(this);
-        } catch (IOException exception) {
+            messageHendler.start(this, settings);
+        } catch (IOException | ParseException exception) {
             this.logger.log(exception.getMessage());
             this.admin.printMessage(exception.getMessage());
         }
@@ -64,7 +65,7 @@ public class SocketClientService implements IClientService {
     public IMessage getClientRequest(String username, IMessageFactory messageFactory) throws IOException {
         String input = in.readLine();
         return messageFactory
-                .newMessage(input.equals(CommandsList.EXIT.command()) ? CommandsList.EXIT.command() :  username, input);
+                .newMessage(input.equals(CommandsList.EXIT.command()) ? CommandsList.EXIT.command() : username, input);
 
     }
 

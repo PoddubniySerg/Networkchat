@@ -66,7 +66,7 @@ public class ChatServer {
                 Socket clientAccept = server.accept();
                 SocketClientService clientService = new SocketClientService
                         (clientAccept, this.logger, this.admin, this.messageHandlerFactory.newClientService(this.storage));
-                threadPool.execute(clientService::start);
+                threadPool.execute(() -> clientService.start(this.settings));
             } catch (IOException exception) {
                 logger.log(exception.getMessage());
                 admin.printMessage(exception.getMessage());

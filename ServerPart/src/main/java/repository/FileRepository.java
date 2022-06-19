@@ -1,12 +1,16 @@
 package repository;
 
+import model.CommandsList;
 import services.ISettings;
 import services.IRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class FileRepository implements IRepository {
 
@@ -36,8 +40,33 @@ public class FileRepository implements IRepository {
     @Override
     public void saveUsersJson(String json, ISettings settings) throws IOException {
         Path pathFile = Path.of(settings.getPathUsersFile());
+        if (!Files.exists(pathFile)) {
+            Files.createFile(pathFile);
+        }
         if (Files.exists(pathFile) && Files.isWritable(pathFile)) {
             Files.write(pathFile, Collections.singleton(json));
         }
+    }
+
+    @Override
+    synchronized public void saveUserMessage(String username, String jsonMessage, ISettings settings) throws IOException {
+        Path pathFile = Path.of(settings.getPathUsersMessages() + username + ".txt");
+        if (!Files.exists(pathFile)) {
+            Files.createFile(pathFile);
+        }
+        if (Files.exists(pathFile) && Files.isWritable(pathFile) && !jsonMessage.contains(CommandsList.EXIT.command())) {
+            Files.write(pathFile, Collections.singleton(jsonMessage), StandardOpenOption.APPEND);
+        }
+    }
+
+    @Override
+    public List<String> getUserMessages(String username, ISettings settings) throws IOException {
+        Path pathFile = Path.of(settings.getPathUsersMessages() + username + ".txt");
+        if (Files.exists(pathFile) && Files.isReadable(pathFile)) {
+            List<String> messages = Files.readAllLines(pathFile);
+            if (Files.isWritable(pathFile)) Files.write(pathFile, Collections.singleton(""));
+            return messages;
+        }
+        return new ArrayList<>();
     }
 }

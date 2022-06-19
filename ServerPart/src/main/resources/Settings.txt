@@ -1,1 +1,1 @@
-[{"port":"23","pathLogFile":"ServerPart/src/main/resources/log.txt","pathUsersFile":"ServerPart/src/main/resources/users.gson"}]
+[{"port":"23","pathLogFile":"ServerPart/src/main/resources/log.txt","pathUsersFile":"ServerPart/src/main/resources/users.json","pathUsersMessages":"ServerPart/src/main/resources/messages/"}]

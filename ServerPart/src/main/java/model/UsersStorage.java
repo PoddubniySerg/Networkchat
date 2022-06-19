@@ -1,5 +1,6 @@
 package model;
 
+import org.json.simple.parser.ParseException;
 import services.*;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class UsersStorage implements IStorage {
         }
     }
 
-    private void fillUsers(List<User> userList) {
+    private void fillUsers(List<User> userList) throws IOException {
         if (userList.isEmpty()) return;
         for (User user : userList) {
             this.users.put(user.getUsername(), user);
@@ -55,21 +56,35 @@ public class UsersStorage implements IStorage {
     }
 
     @Override
+    public void messageSyncr(String login, ISettings settings) throws IOException, ParseException {
+        List<String> messages = this.repository.getUserMessages(login, settings);
+        for (String message : messages) {
+            this.users.get(login).newMessage(message);
+        }
+    }
+
+    @Override
     public boolean passwordIsValid(String login, String password) {
         return password.equals(this.users.get(login).getPassword());
     }
 
     @Override
-    public void newMessage(String login, IMessage message) {
+    public void newMessage(String login, IMessage message, ISettings settings) throws IOException {
         if (message.getTitle().equals(CommandsList.EXIT.command())) {
             this.users.get(login).newMessage(message);
             return;
         }
         this.logger.log(message);
+        IMessage forAuthorMessage = new ChatMessage("you", message.getContent());
         for (User user : this.users.values()) {
-            if (user.getUsername().equals(login)) {
-                user.newMessage(new ChatMessage("you", message.getContent()));
-            } else user.newMessage(message);
+            if (user.isUserOnline()) {
+                user.newMessage(!user.getUsername().equals(login) ? message : forAuthorMessage);
+            } else {
+                this.repository.saveUserMessage(
+                        user.getUsername(),
+                        !user.getUsername().equals(login) ? message.getJson() : forAuthorMessage.getJson(),
+                        settings);
+            }
         }
     }
 
@@ -79,16 +94,27 @@ public class UsersStorage implements IStorage {
     }
 
     @Override
-    public IMessage nextMessage(String login) {
-        return this.users.get(login).nextMessage();
+    public IMessage nextMessage(String login, ISettings settings) {
+        IMessage message = this.users.get(login).nextMessage();
+        try {
+            this.repository.saveUserMessage(login, message.getJson(), settings);
+        } catch (IOException exception) {
+            this.logger.log(exception.getMessage());
+        }
+        return message;
     }
 
     @Override
     public void close(ISettings settings) throws IOException {
-        for (User user : users.values()) {
+        for (User user : this.users.values()) {
             if (user.isUserOnline()) {
-                this.newMessage(user.getUsername(), new ChatMessage(user.getUsername(), "disabled by server"));
+                this.newMessage(user.getUsername(), new ChatMessage(user.getUsername(), "disabled by server"), settings);
                 user.setUserStatusOnline(false);
+            }
+            IMessage message = user.nextMessage();
+            while (message != null) {
+                this.repository.saveUserMessage(user.getUsername(), message.getJson(), settings);
+                message = user.nextMessage();
             }
         }
         repository.saveUsersJson(User.jsonFromUsersList(new ArrayList<>(this.users.values())), settings);
