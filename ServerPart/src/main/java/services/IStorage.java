@@ -1,15 +1,23 @@
 package services;
 
 
-import java.util.Set;
+import java.io.IOException;
 
 public interface IStorage {
 
-    IUser getUser(String username);
+    void newUser(String username, String password);
 
-    Set<String> getUsernameSet();
+    boolean isExist(String username);
 
-    boolean newUser(String username, String password);
+    void setUserStatusOnline(String login, boolean status);
 
-    void closeStorage();
+    boolean passwordIsValid(String login, String password);
+
+    void newMessage(String login, IMessage message);
+
+    boolean messageListIsEmpty(String login);
+
+    IMessage nextMessage(String login);
+
+    void close(ISettings settings) throws IOException;
 }

@@ -1,18 +1,8 @@
 package model;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import services.ILogger;
-import services.IMessage;
+import services.IResponse;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Message implements IMessage {
+public class NetServerResponse implements IResponse {
 
     private final String title;
 
@@ -20,7 +10,7 @@ public class Message implements IMessage {
 
     private final String localDateTime;
 
-    public Message(String title, String content, String localDateTime) {
+    public NetServerResponse(String title, String content, String localDateTime) {
         this.title = title;
         this.content = content;
         this.localDateTime = localDateTime;
@@ -49,10 +39,10 @@ public class Message implements IMessage {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Message)) return false;
-        Message message = (Message) obj;
-        return this.title.equals(message.getTitle())
-                && this.content.equals(message.getContent())
-                && this.localDateTime.equals(message.getDateTime());
+        if (!(obj instanceof NetServerResponse)) return false;
+        NetServerResponse response = (NetServerResponse) obj;
+        return this.title.equals(response.getTitle())
+                && this.content.equals(response.getContent())
+                && this.localDateTime.equals(response.getDateTime());
     }
 }

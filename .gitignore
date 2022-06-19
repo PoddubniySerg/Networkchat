@@ -1,4 +1,6 @@
 .idea
 *target/
 *log.txt
-*storage.gson
+*users.gson
+*test/
+*leave/

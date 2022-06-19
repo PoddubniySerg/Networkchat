@@ -9,21 +9,21 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-public class NetClient implements INetClient {
+public class NetServer implements IServer {
     private final ILogger logger;
     private final ISettings settings;
-    private final IModel model;
-    private final IMessageFactory messageFactory;
+    private final IClient model;
+    private final IResponseFactory responseFactory;
 
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
 
-    public NetClient(ILogger logger, ISettings settings, IModel model, IMessageFactory messageFactory) {
+    public NetServer(ILogger logger, ISettings settings, IClient model, IResponseFactory responseFactory) {
         this.logger = logger;
         this.settings = settings;
         this.model = model;
-        this.messageFactory = messageFactory;
+        this.responseFactory = responseFactory;
     }
 
     public void start() throws IOException {
@@ -37,23 +37,32 @@ public class NetClient implements INetClient {
             this.out = out;
             this.model.start(this);
         } catch (IOException exception) {
-            this.logger.log(this.messageFactory.newMessage(exception.getMessage()));
-            throw new RuntimeException(exception);
+            this.logger.log(exception.getMessage());
         }
     }
 
     @Override
-    public boolean sergverIsConnected() {
+    public boolean serverIsConnected() {
         return !this.socket.isClosed();
     }
 
     @Override
-    public String readLine() throws IOException {
-        return this.in.readLine();
+    public IResponse getResponse() throws IOException {
+        String title = this.in.readLine();
+        String content = this.in.readLine();
+        String dateTime = this.in.readLine();
+        return responseFactory.newResponse(title, content, dateTime);
     }
 
     @Override
-    public void sendString(String string) {
+    public void sendRequest(String string) {
         this.out.println(string);
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.socket.close();
+        this.in.close();
+        this.out.close();
     }
 }

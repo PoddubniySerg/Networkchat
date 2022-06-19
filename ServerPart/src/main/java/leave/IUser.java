@@ -1,4 +1,6 @@
-package services;
+package leave;
+
+import services.IMessage;
 
 public interface IUser {
 
@@ -12,7 +14,7 @@ public interface IUser {
 
     boolean messageListIsEmpty();
 
-    String getJsonMessages();
+    IMessage nextMessage();
 
-    IMessage newMessage(String title, String content, String localDateTime);
+    void newMessage(IMessage message);
 }

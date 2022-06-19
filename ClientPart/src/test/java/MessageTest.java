@@ -1,9 +1,9 @@
-import model.Message;
+import model.NetServerResponse;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import services.IMessage;
+import services.IResponse;
 
 import java.util.stream.Stream;
 
@@ -39,7 +39,7 @@ public class MessageTest {
     public void testGetTitle() {
 //        arrange
         String expected = "Serg";
-        IMessage message = new Message("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+        IResponse message = new NetServerResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
 //        act
         String result = message.getTitle();
 //        assert
@@ -50,7 +50,7 @@ public class MessageTest {
     public void testGetContent() {
 //        arrange
         String expected = "Hello";
-        IMessage message = new Message("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+        IResponse message = new NetServerResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
 //        act
         String result = message.getContent();
 //        assert
@@ -61,7 +61,7 @@ public class MessageTest {
     public void testGetDateTime() {
 //        arrange
         String expected = "2022-06-13T14:32:10.694341200";
-        IMessage message = new Message("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+        IResponse message = new NetServerResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
 //        act
         String result = message.getDateTime();
 //        assert
@@ -72,7 +72,7 @@ public class MessageTest {
     public void testToString() {
 //        arrange
         String expected = "Serg\nHello\n2022-06-13T14:32:10.694341200\n";
-        IMessage message = new Message("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+        IResponse message = new NetServerResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
 //        act
         String result = message.toString();
 //        assert
@@ -82,19 +82,19 @@ public class MessageTest {
 
     @ParameterizedTest
     @MethodSource("parametersForTestEqualsMethod")
-    public void testEqualsMethod(IMessage message) {
+    public void testEqualsMethod(IResponse message) {
 //        arrange
-        IMessage expected = new Message("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+        IResponse expected = new NetServerResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
 //        assert
         Assertions.assertNotEquals(message, expected);
     }
 
     private Stream<Arguments> parametersForTestEqualsMethod() {
         return Stream.of(
-                Arguments.of(new Message("", "Hello", "2022-06-13T14:32:10.694341200")),
-                Arguments.of(new Message("Serg", "", "2022-06-13T14:32:10.694341200")),
-                Arguments.of(new Message("Serg", "Hello", "")),
-                Arguments.of(new Message("", "", ""))
+                Arguments.of(new NetServerResponse("", "Hello", "2022-06-13T14:32:10.694341200")),
+                Arguments.of(new NetServerResponse("Serg", "", "2022-06-13T14:32:10.694341200")),
+                Arguments.of(new NetServerResponse("Serg", "Hello", "")),
+                Arguments.of(new NetServerResponse("", "", ""))
         );
     }
 }

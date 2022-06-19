@@ -1,13 +1,13 @@
-import model.MessageFactory;
-import model.Model;
+import model.NetServerResponseFactory;
+import model.Client;
 import model.Settings;
 import org.json.simple.parser.ParseException;
-import repository.NetClient;
+import repository.NetServer;
 import repository.ConsoleView;
 import repository.FileLogger;
 import repository.FileStorage;
 import services.ILogger;
-import services.IModel;
+import services.IClient;
 import services.ISettings;
 
 import java.io.IOException;
@@ -21,8 +21,8 @@ public class Main {
         try {
             settings = Settings.getSettingsFromJson(new FileStorage(PATH_SETTINGS).getSettingsJson());
             ILogger logger = new FileLogger(settings);
-            IModel model = new Model(logger, new ConsoleView(), new MessageFactory());
-            new NetClient(logger, settings, model, new MessageFactory()).start();
+            IClient model = new Client(logger, new ConsoleView());
+            new NetServer(logger, settings, model, new NetServerResponseFactory()).start();
         } catch (ParseException | IOException exception) {
             throw new RuntimeException(exception);
         }

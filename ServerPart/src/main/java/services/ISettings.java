@@ -6,5 +6,7 @@ public interface ISettings {
 
     String getPathLogFile();
 
-    String getPathStorageFile();
+    String getPathUsersFile();
+
+    ISettings getSettingsFromJson(String json);
 }

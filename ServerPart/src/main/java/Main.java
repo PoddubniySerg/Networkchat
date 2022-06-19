@@ -1,20 +1,25 @@
-import model.ChatServer;
+import model.*;
+import repository.server.ChatServer;
+import repository.ConsoleAdmin;
 import repository.FileLogger;
-import repository.FileSettings;
-import repository.JsonFileStorage;
-import services.ILogger;
-import services.ISettings;
-import services.IStorage;
+import repository.FileRepository;
+import services.*;
 
-import java.nio.file.Path;
+import java.io.IOException;
 
 public class Main {
     public final static String PATH_SETTINGS = "ServerPart/src/main/resources/Settings.txt";
 
     public static void main(String[] args) {
-        ISettings settings = new FileSettings(Path.of(PATH_SETTINGS));
-        ILogger logger = new FileLogger(settings);
-        IStorage storage = new JsonFileStorage(settings, logger);
-        new ChatServer(settings, storage, logger).start();
+        try {
+            IAdmin admin = new ConsoleAdmin();
+            IRepository repository = new FileRepository();
+            ISettings settings = new Settings(repository.getSettingsJson(PATH_SETTINGS));
+            ILogger logger = new FileLogger(settings);
+            IStorage storage = new UsersStorage(logger, repository, settings, admin);
+            new ChatServer(new MessageHandlerFactory(), settings, logger, storage, admin).start();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 }

@@ -1,7 +1,7 @@
 package repository;
 
 import services.ILogger;
-import services.IMessage;
+import services.IResponse;
 import services.ISettings;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class FileLogger implements ILogger {
     }
 
     @Override
-    public void log(IMessage message) throws IOException {
+    public void log(IResponse message) throws IOException {
         synchronized (this.path) {
             if (!Files.exists(this.path)) {
                 Files.createFile(this.path);
@@ -30,6 +30,21 @@ public class FileLogger implements ILogger {
                 Files.write(this.path, Collections.singleton(message.getContent()), StandardOpenOption.APPEND);
                 Files.write(this.path, Collections.singleton(message.getDateTime()), StandardOpenOption.APPEND);
                 Files.write(this.path, Collections.singleton(""), StandardOpenOption.APPEND);
+            }
+        }
+    }
+
+    @Override
+    public void log(String message) throws IOException {
+        synchronized (this.path) {
+            if (!Files.exists(this.path)) {
+                Files.createFile(this.path);
+            }
+            if (Files.exists(this.path) && Files.isWritable(this.path)) {
+                Files.write(
+                        this.path,
+                        Collections.singleton(message + "\n" + LocalDateTime.now() + "\n"), StandardOpenOption.APPEND
+                );
             }
         }
     }

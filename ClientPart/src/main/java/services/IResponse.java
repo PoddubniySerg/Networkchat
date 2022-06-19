@@ -1,6 +1,6 @@
 package services;
 
-public interface IMessage {
+public interface IResponse {
 
     String getTitle();
 

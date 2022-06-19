@@ -1,9 +1,9 @@
-import model.Model;
+import model.Client;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import services.ILogger;
-import services.IMessageFactory;
-import services.INetClient;
+import services.IResponseFactory;
+import services.IServer;
 import services.IView;
 
 import java.io.IOException;
@@ -39,11 +39,11 @@ public class ModelTest {
     @Test
     public void testIsLoggedMethodTrue() throws IOException {
         IView viewMock = Mockito.mock(IView.class);
-        IMessageFactory messageFactoryMock = Mockito.mock(IMessageFactory.class);
-        INetClient iNetClientMock = Mockito.mock(INetClient.class);
-        Mockito.when(iNetClientMock.sergverIsConnected()).thenReturn(true);
-        Mockito.when(iNetClientMock.readLine()).thenReturn("OK!");
+        IResponseFactory messageFactoryMock = Mockito.mock(IResponseFactory.class);
+        IServer iNetClientMock = Mockito.mock(IServer.class);
+        Mockito.when(iNetClientMock.serverIsConnected()).thenReturn(true);
+
         Mockito.when(viewMock.getString()).thenReturn(Mockito.any());
-        new Model(loggerMock, viewMock, messageFactoryMock).start(iNetClientMock);
+        new Client(loggerMock, viewMock).start(iNetClientMock);
     }
 }
