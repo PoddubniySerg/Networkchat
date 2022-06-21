@@ -50,7 +50,7 @@ public class FileRepository implements IRepository {
 
     @Override
     synchronized public void saveUserMessage(String username, String jsonMessage, ISettings settings) throws IOException {
-        Path pathFile = Path.of(settings.getPathUsersMessages() + username + ".txt");
+        Path pathFile = Path.of(settings.getPathUsersMessages() + username + ".user");
         if (!Files.exists(pathFile)) {
             Files.createFile(pathFile);
         }
@@ -61,7 +61,7 @@ public class FileRepository implements IRepository {
 
     @Override
     public List<String> getUserMessages(String username, ISettings settings) throws IOException {
-        Path pathFile = Path.of(settings.getPathUsersMessages() + username + ".txt");
+        Path pathFile = Path.of(settings.getPathUsersMessages() + username + ".user");
         if (Files.exists(pathFile) && Files.isReadable(pathFile)) {
             List<String> messages = Files.readAllLines(pathFile);
             if (Files.isWritable(pathFile)) Files.write(pathFile, Collections.singleton(""));
