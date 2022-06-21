@@ -31,7 +31,7 @@ public class MessageHandler implements IMessageHendler {
     }
 
     private String authorization(IClientService clientService, ISettings settings) throws IOException, ParseException {
-        while (true) {
+        while (!clientService.serverIsClosed()) {
             IMessage request = clientService.getClientRequest(new ChatMessageFactory());
             if (request.getTitle().equals(CommandsList.AUTHORIZATION.command())) {
                 clientService.sendResponse(this.startMessage);
@@ -73,6 +73,7 @@ public class MessageHandler implements IMessageHendler {
                 }
             }
         }
+        return CommandsList.EXIT.command();
     }
 
     private void registrationNewUser(IClientService clientService, String login, ISettings settings) throws IOException {
@@ -84,7 +85,6 @@ public class MessageHandler implements IMessageHendler {
         );
         IMessage password = clientService.getClientRequest(new ChatMessageFactory());
         this.storage.newUser(login, password.getContent());
-        this.storage.setUserStatusOnline(login, true);
         this.storage.newMessage(
                 login,
                 new ChatMessage(login, "New user in chat. Welcome!"),
@@ -135,5 +135,15 @@ public class MessageHandler implements IMessageHendler {
                 clientService.sendResponse(this.storage.nextMessage(login, settings));
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof MessageHandler)) return false;
+        MessageHandler messageHandler = (MessageHandler) obj;
+        return this.storage.equals(messageHandler.storage)
+                && this.startMessage.getTitle().equals(messageHandler.startMessage.getTitle())
+                && this.startMessage.getContent().equals(messageHandler.startMessage.getContent());
     }
 }

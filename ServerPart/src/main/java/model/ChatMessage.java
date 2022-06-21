@@ -62,4 +62,14 @@ public class ChatMessage implements IMessage {
         Gson gson = new GsonBuilder().create();
         return gson.toJson(this, type);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof ChatMessage)) return false;
+        ChatMessage message = (ChatMessage) obj;
+        return this.title.equals(message.getTitle())
+                && this.content.equals(message.getContent())
+                && this.localDateTime.equals(message.getDateTime());
+    }
 }

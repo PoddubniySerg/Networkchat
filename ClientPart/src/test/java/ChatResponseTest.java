@@ -1,4 +1,4 @@
-import model.NetServerResponse;
+import model.ChatResponse;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -8,7 +8,7 @@ import services.IResponse;
 import java.util.stream.Stream;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class MessageTest {
+public class ChatResponseTest {
 
     private static long suiteStartTime;
     private long testStartTime;
@@ -39,7 +39,7 @@ public class MessageTest {
     public void testGetTitle() {
 //        arrange
         String expected = "Serg";
-        IResponse message = new NetServerResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+        IResponse message = new ChatResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
 //        act
         String result = message.getTitle();
 //        assert
@@ -50,7 +50,7 @@ public class MessageTest {
     public void testGetContent() {
 //        arrange
         String expected = "Hello";
-        IResponse message = new NetServerResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+        IResponse message = new ChatResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
 //        act
         String result = message.getContent();
 //        assert
@@ -61,7 +61,7 @@ public class MessageTest {
     public void testGetDateTime() {
 //        arrange
         String expected = "2022-06-13T14:32:10.694341200";
-        IResponse message = new NetServerResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+        IResponse message = new ChatResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
 //        act
         String result = message.getDateTime();
 //        assert
@@ -71,30 +71,51 @@ public class MessageTest {
     @Test
     public void testToString() {
 //        arrange
-        String expected = "Serg\nHello\n2022-06-13T14:32:10.694341200\n";
-        IResponse message = new NetServerResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+        String expected = null + "\nHello\n2022-06-13T14:32:10.694341200\n";
+        IResponse message = new ChatResponse(null, "Hello", "2022-06-13T14:32:10.694341200");
 //        act
         String result = message.toString();
 //        assert
         Assertions.assertEquals(result, expected);
     }
 
-
     @ParameterizedTest
-    @MethodSource("parametersForTestEqualsMethod")
-    public void testEqualsMethod(IResponse message) {
+    @MethodSource("parametersForTestEqualsMethodWithNotEquals")
+    public void testEqualsMethodWithNotEquals(IResponse message) {
 //        arrange
-        IResponse expected = new NetServerResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+        IResponse expected = new ChatResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
 //        assert
         Assertions.assertNotEquals(message, expected);
     }
 
-    private Stream<Arguments> parametersForTestEqualsMethod() {
+    private Stream<Arguments> parametersForTestEqualsMethodWithNotEquals() {
         return Stream.of(
-                Arguments.of(new NetServerResponse("", "Hello", "2022-06-13T14:32:10.694341200")),
-                Arguments.of(new NetServerResponse("Serg", "", "2022-06-13T14:32:10.694341200")),
-                Arguments.of(new NetServerResponse("Serg", "Hello", "")),
-                Arguments.of(new NetServerResponse("", "", ""))
+                Arguments.of(new ChatResponse("", "Hello", "2022-06-13T14:32:10.694341200")),
+                Arguments.of(new ChatResponse("Serg", "", "2022-06-13T14:32:10.694341200")),
+                Arguments.of(new ChatResponse("Serg", "Hello", "")),
+                Arguments.of(new ChatResponse("", "", ""))
         );
+    }
+
+    @Test
+    public void testEqualsMethod() {
+//        arrange
+        IResponse expected = new ChatResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+//        act
+        IResponse result = new ChatResponse("Serg", "Hello", "2022-06-13T14:32:10.694341200");
+//        assert
+        Assertions.assertEquals(result.getTitle(), expected.getTitle());
+        Assertions.assertEquals(result.getContent(), expected.getContent());
+        Assertions.assertEquals(result.getDateTime(), expected.getDateTime());
+    }
+
+    @Test
+    public void testEqualsMethodWithNull() throws NullPointerException {
+//        arrange
+        IResponse expected = new ChatResponse(null, null, null);
+//        act
+        IResponse result = new ChatResponse(null, null, null);
+//        assert
+        Assertions.assertThrows(NullPointerException.class, () -> result.equals(expected));
     }
 }

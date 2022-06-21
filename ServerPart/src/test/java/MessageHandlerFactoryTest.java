@@ -1,16 +1,12 @@
-import model.Client;
+import model.MessageHandler;
+import model.MessageHandlerFactory;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
-import services.ILogger;
-import services.IResponseFactory;
-import services.IServer;
-import services.IView;
+import services.IMessageHendler;
+import services.IStorage;
 
-import java.io.IOException;
+public class MessageHandlerFactoryTest {
 
-public class ModelTest {
-
-    private static ILogger loggerMock = Mockito.mock(ILogger.class);
     private static long suiteStartTime;
     private long testStartTime;
 
@@ -37,13 +33,14 @@ public class ModelTest {
     }
 
     @Test
-    public void testIsLoggedMethodTrue() throws IOException {
-        IView viewMock = Mockito.mock(IView.class);
-        IResponseFactory messageFactoryMock = Mockito.mock(IResponseFactory.class);
-        IServer iNetClientMock = Mockito.mock(IServer.class);
-        Mockito.when(iNetClientMock.serverIsConnected()).thenReturn(true);
-
-        Mockito.when(viewMock.getString()).thenReturn(Mockito.any());
-        new Client(loggerMock, viewMock).start(iNetClientMock);
+    public void newClientServiceTest() {
+//        arrange
+        MessageHandlerFactory messageHandlerFactory = new MessageHandlerFactory();
+        IStorage storage = Mockito.mock(IStorage.class);
+        IMessageHendler expected = new MessageHandler(storage);
+//        act
+        IMessageHendler result = messageHandlerFactory.newClientService(storage);
+//        assert
+        Assertions.assertEquals(result, expected);
     }
 }

@@ -47,7 +47,6 @@ public class SettingsTest {
         Assertions.assertEquals(result, expected);
     }
 
-
     @ParameterizedTest
     @MethodSource("parametersForTestGetSettingsFromJsonWithIncorrectInput")
     public void testGetSettingsFromJsonWithIncorrectInput(String jsonString) {
@@ -94,5 +93,42 @@ public class SettingsTest {
         String result = settings.getHost();
 //        assert
         Assertions.assertEquals(result, expected);
+    }
+
+    @ParameterizedTest
+    @MethodSource("parametersForTestEqualsMethodWithNotEquals")
+    public void testEqualsMethodWithNotEquals(ISettings settings) {
+//        arrange
+        ISettings expected = new Settings(23, "ClientPart/src/main/resources/log.txt", "127.0.0.1");
+//        assert
+        Assertions.assertNotEquals(settings, expected);
+    }
+
+    private Stream<Arguments> parametersForTestEqualsMethodWithNotEquals() {
+        return Stream.of(
+                Arguments.of(new Settings(-10, "ClientPart/src/main/resources/log.txt", "127.0.0.1")),
+                Arguments.of(new Settings(23, "Any addres", "127.0.0.1")),
+                Arguments.of(new Settings(23, "ClientPart/src/main/resources/log.txt", "12.20"))
+        );
+    }
+
+    @Test
+    public void testEqualsMethod() {
+//        arrange
+        ISettings expected = new Settings(23, "ClientPart/src/main/resources/log.txt", "127.0.0.1");
+//        act
+        ISettings result = new Settings(23, "ClientPart/src/main/resources/log.txt", "127.0.0.1");
+//        assert
+        Assertions.assertEquals(result, expected);
+    }
+
+    @Test
+    public void testEqualsMethodWithNull() throws NullPointerException {
+//        arrange
+        ISettings expected = new Settings(23, "ClientPart/src/main/resources/log.txt", "127.0.0.1");
+//        act
+        ISettings result = new Settings(23, null, "127.0.0.1");
+//        assert
+        Assertions.assertThrows(NullPointerException.class, () -> result.equals(expected));
     }
 }

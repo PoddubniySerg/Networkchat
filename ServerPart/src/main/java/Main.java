@@ -1,4 +1,5 @@
 import model.*;
+import org.json.simple.parser.ParseException;
 import repository.server.ChatServer;
 import repository.ConsoleAdmin;
 import repository.FileLogger;
@@ -18,7 +19,7 @@ public class Main {
             ILogger logger = new FileLogger(settings);
             IStorage storage = new UsersStorage(logger, repository, settings, admin);
             new ChatServer(new MessageHandlerFactory(), settings, logger, storage, admin).start();
-        } catch (IOException exception) {
+        } catch (IOException | ParseException exception) {
             exception.printStackTrace();
         }
     }

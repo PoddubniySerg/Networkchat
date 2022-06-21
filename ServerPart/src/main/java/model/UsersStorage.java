@@ -27,13 +27,13 @@ public class UsersStorage implements IStorage {
         this.repository = repository;
         try {
             this.fillUsers(Objects.requireNonNull(User.usersFromJson(repository.getUsersJson(settings))));
-        } catch (IOException exception) {
+        } catch (IOException | ParseException exception) {
             logger.log(exception.getMessage());
             admin.printMessage(exception.getMessage());
         }
     }
 
-    private void fillUsers(List<User> userList) throws IOException {
+    private void fillUsers(List<User> userList) {
         if (userList.isEmpty()) return;
         for (User user : userList) {
             this.users.put(user.getUsername(), user);
@@ -47,6 +47,7 @@ public class UsersStorage implements IStorage {
 
     @Override
     public boolean isExist(String username) {
+        if (username == null) return false;
         return this.users.containsKey(username);
     }
 
@@ -65,6 +66,7 @@ public class UsersStorage implements IStorage {
 
     @Override
     public boolean passwordIsValid(String login, String password) {
+        if (!this.isExist(login) || password == null) return false;
         return password.equals(this.users.get(login).getPassword());
     }
 
@@ -96,10 +98,12 @@ public class UsersStorage implements IStorage {
     @Override
     public IMessage nextMessage(String login, ISettings settings) {
         IMessage message = this.users.get(login).nextMessage();
-        try {
-            this.repository.saveUserMessage(login, message.getJson(), settings);
-        } catch (IOException exception) {
-            this.logger.log(exception.getMessage());
+        if (message != null) {
+            try {
+                this.repository.saveUserMessage(login, message.getJson(), settings);
+            } catch (IOException exception) {
+                this.logger.log(exception.getMessage());
+            }
         }
         return message;
     }

@@ -1,4 +1,4 @@
-import model.NetServerResponseFactory;
+import model.ChatResponseFactory;
 import org.junit.jupiter.api.*;
 import services.IResponse;
 import services.IResponseFactory;
@@ -6,7 +6,7 @@ import services.IResponseFactory;
 import java.time.LocalDateTime;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class NetServerResponseFactoryTest {
+public class ChatResponseFactoryTest {
     private static long suiteStartTime;
     private long testStartTime;
 
@@ -35,10 +35,10 @@ public class NetServerResponseFactoryTest {
     @Test
     public void testNewResponse() {
 //        arrange
-        String title = "you";
+        String title = null;
         String content = "Any text";
         String dateTime = LocalDateTime.now().toString();
-        IResponseFactory responseFactory = new NetServerResponseFactory();
+        IResponseFactory responseFactory = new ChatResponseFactory();
 //        act
         IResponse result = responseFactory.newResponse(title, content, dateTime);
 //        assert

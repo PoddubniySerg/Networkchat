@@ -1,4 +1,4 @@
-import model.NetServerResponseFactory;
+import model.ChatResponseFactory;
 import model.Client;
 import model.Settings;
 import org.json.simple.parser.ParseException;
@@ -22,7 +22,7 @@ public class Main {
             settings = Settings.getSettingsFromJson(new FileStorage(PATH_SETTINGS).getSettingsJson());
             ILogger logger = new FileLogger(settings);
             IClient model = new Client(logger, new ConsoleView());
-            new NetServer(logger, settings, model, new NetServerResponseFactory()).start();
+            new NetServer(logger, settings, model, new ChatResponseFactory()).start();
         } catch (ParseException | IOException exception) {
             throw new RuntimeException(exception);
         }

@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import services.ISettings;
 
 public class Settings implements ISettings {
@@ -13,7 +14,7 @@ public class Settings implements ISettings {
     private final String pathUsersFile;
     private final String pathUsersMessages;
 
-    public Settings(String json) {
+    public Settings(String json) throws ParseException {
         ISettings settings = this.getSettingsFromJson(json);
         this.port = settings.getPort();
         this.pathLogFile = settings.getPathLogFile();
@@ -41,17 +42,10 @@ public class Settings implements ISettings {
         return this.pathUsersMessages;
     }
 
-    @Override
-    public ISettings getSettingsFromJson(String json) {
-        ISettings settings;
-        try {
-            JSONArray jsonArray = (JSONArray) new JSONParser().parse(json);
-            Gson gson = new GsonBuilder().create();
-            JSONObject jsonObject = (JSONObject) jsonArray.get(0);
-            settings = gson.fromJson(jsonObject.toJSONString(), Settings.class);
-        } catch (org.json.simple.parser.ParseException exception) {
-            throw new RuntimeException(exception);
-        }
-        return settings;
+    private ISettings getSettingsFromJson(String json) throws ParseException {
+        JSONArray jsonArray = (JSONArray) new JSONParser().parse(json);
+        Gson gson = new GsonBuilder().create();
+        JSONObject jsonObject = (JSONObject) jsonArray.get(0);
+        return gson.fromJson(jsonObject.toJSONString(), Settings.class);
     }
 }

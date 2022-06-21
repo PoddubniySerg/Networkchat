@@ -27,7 +27,6 @@ public class Client implements IClient {
         this.view.printMessage(startText);
         if (this.isLogged(server)) {
             Thread outputThread = new Thread(() -> this.sendMessageToServer(server));
-            outputThread.setDaemon(true);
             outputThread.start();
             this.inputFromServer(server);
             outputThread.interrupt();

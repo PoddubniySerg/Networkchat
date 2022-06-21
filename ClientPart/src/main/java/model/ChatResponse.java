@@ -2,7 +2,7 @@ package model;
 
 import services.IResponse;
 
-public class NetServerResponse implements IResponse {
+public class ChatResponse implements IResponse {
 
     private final String title;
 
@@ -10,7 +10,7 @@ public class NetServerResponse implements IResponse {
 
     private final String localDateTime;
 
-    public NetServerResponse(String title, String content, String localDateTime) {
+    public ChatResponse(String title, String content, String localDateTime) {
         this.title = title;
         this.content = content;
         this.localDateTime = localDateTime;
@@ -39,8 +39,8 @@ public class NetServerResponse implements IResponse {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof NetServerResponse)) return false;
-        NetServerResponse response = (NetServerResponse) obj;
+        if (!(obj instanceof ChatResponse)) return false;
+        ChatResponse response = (ChatResponse) obj;
         return this.title.equals(response.getTitle())
                 && this.content.equals(response.getContent())
                 && this.localDateTime.equals(response.getDateTime());

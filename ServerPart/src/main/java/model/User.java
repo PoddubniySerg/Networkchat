@@ -18,6 +18,7 @@ public class User {
 
     private final String username;
     private final String password;
+
     private boolean userOnline;
 
     private final ConcurrentLinkedQueue<ChatMessage> messages;
@@ -32,9 +33,8 @@ public class User {
         return new User(username, password);
     }
 
-    public static List<User> usersFromJson(String json) {
+    public static List<User> usersFromJson(String json) throws ParseException {
         List<User> userList = new ArrayList<>();
-        try {
             JSONArray jsonArray = (JSONArray) new JSONParser().parse(json);
             Gson gson = new GsonBuilder().create();
             for (Object object : jsonArray) {
@@ -42,9 +42,6 @@ public class User {
                 User user = gson.fromJson(jsonObject.toJSONString(), User.class);
                 userList.add(user);
             }
-        } catch (ParseException exception) {
-            System.out.println(exception.getMessage());
-        }
         return userList;
     }
 
@@ -86,7 +83,16 @@ public class User {
     public void newMessage(String jsonMessage) throws ParseException {
         if (jsonMessage != null && !jsonMessage.isEmpty()) {
             ChatMessage message = ChatMessage.getMessageFromJson(jsonMessage);
-            if (message != null) this.messages.add(message);
+            this.messages.add(message);
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof User)) return false;
+        User user = (User) obj;
+        return this.username.equals(user.getUsername())
+                && this.password.equals(user.getPassword());
     }
 }
