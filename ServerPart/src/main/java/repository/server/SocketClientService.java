@@ -31,6 +31,7 @@ public class SocketClientService implements IClientService {
 
     public void start(ISettings settings) {
         try (
+                this.socket;
                 BufferedReader in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
                 PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true, StandardCharsets.UTF_8)
         ) {
