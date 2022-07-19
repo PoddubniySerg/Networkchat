@@ -3,11 +3,12 @@ package model;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import model.message.ChatMessage;
+import model.message.IMessage;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import services.IMessage;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

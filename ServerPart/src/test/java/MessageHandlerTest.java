@@ -1,9 +1,13 @@
-import model.CommandsList;
-import model.MessageHandler;
+import model.message.IMessage;
+import model.settings.ISettings;
+import services.constant.CommandsList;
+import services.handler.message.MessageHandler;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
-import services.*;
+import repository.storage.IStorage;
+import services.factory.IMessageFactory;
+import services.server.IClientService;
 
 import java.io.IOException;
 
@@ -184,25 +188,5 @@ public class MessageHandlerTest {
         Mockito.doThrow(new IOException()).when(storageMock).messageSyncr(login, settingsMock);
 //        assert
         Assertions.assertThrows(IOException.class, () -> new MessageHandler(storageMock).start(clientServiceMock, settingsMock));
-    }
-
-    @Test
-    public void authorizationWithParseExceptionTest() throws IOException, ParseException {
-//        arrange
-        String login = CommandsList.EXIT.command();
-        ISettings settingsMock = Mockito.mock(ISettings.class);
-        IMessage requestMock = Mockito.mock(IMessage.class);
-        Mockito.when(requestMock.getTitle()).thenReturn(CommandsList.MESSAGE.command());
-        Mockito.when(requestMock.getContent()).thenReturn(login);
-        IClientService clientServiceMock = Mockito.mock(IClientService.class);
-        Mockito.when(clientServiceMock.serverIsClosed()).thenReturn(false);
-        Mockito.when(clientServiceMock.getClientRequest(Mockito.any())).thenReturn(requestMock);
-        Mockito.when(clientServiceMock.getClientRequest(Mockito.anyString(), Mockito.any(IMessageFactory.class))).thenReturn(requestMock);
-        IStorage storageMock = Mockito.mock(IStorage.class);
-        Mockito.when(storageMock.isExist(Mockito.any())).thenReturn(true);
-        Mockito.when(storageMock.passwordIsValid(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
-        Mockito.doThrow(ParseException.class).when(storageMock).messageSyncr(login, settingsMock);
-//        assert
-        Assertions.assertThrows(ParseException.class, () -> new MessageHandler(storageMock).start(clientServiceMock, settingsMock));
     }
 }

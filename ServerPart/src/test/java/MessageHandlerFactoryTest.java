@@ -1,9 +1,9 @@
-import model.MessageHandler;
-import model.MessageHandlerFactory;
+import services.handler.message.MessageHandler;
+import services.factory.MessageHandlerFactory;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
-import services.IMessageHendler;
-import services.IStorage;
+import services.handler.message.IMessageHendler;
+import repository.storage.IStorage;
 
 public class MessageHandlerFactoryTest {
 

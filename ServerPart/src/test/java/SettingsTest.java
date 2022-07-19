@@ -1,10 +1,9 @@
-import model.Settings;
-import org.json.simple.parser.ParseException;
+import model.settings.Settings;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import services.ISettings;
+import model.settings.ISettings;
 
 import java.util.stream.Stream;
 
@@ -37,14 +36,14 @@ public class SettingsTest {
     }
 
     @Test
-    public void getSettingsFromJsonTest() throws ParseException {
+    public void getSettingsFromJsonTest() {
 //        arrange
-        String json = "[{" +
+        String json = "{" +
                 "\"port\":\"23\"," +
                 "\"pathLogFile\":\"ServerPart/src/main/resources/log.txt\"," +
                 "\"pathUsersFile\":\"ServerPart/src/main/resources/users.json\"," +
                 "\"pathUsersMessages\":\"ServerPart/src/main/resources/messages/\"" +
-                "}]";
+                "}";
         int port = 23;
         String pathLogFile = "ServerPart/src/main/resources/log.txt";
         String pathUsersFile = "ServerPart/src/main/resources/users.json";
@@ -61,13 +60,18 @@ public class SettingsTest {
     @ParameterizedTest
     @MethodSource("parametersForGetSettingsFromJsonWithInvalidArgumentTest")
     public void getSettingsFromJsonWithInvalidArgumentTest(String json) {
-        Assertions.assertThrows(ClassCastException.class, () -> new Settings(json));
+//        act
+        Settings result = new Settings(json);
+//        assert
+        Assertions.assertEquals(result.getPort(), 0);
+        Assertions.assertNull(result.getPathLogFile());
+        Assertions.assertNull(result.getPathUsersMessages());
+        Assertions.assertNull(result.getPathUsersFile());
     }
 
     private Stream<Arguments> parametersForGetSettingsFromJsonWithInvalidArgumentTest() {
         return Stream.of(
-                Arguments.of("{}"),
-                Arguments.of("22")
+                Arguments.of("{}")
         );
     }
 
@@ -76,7 +80,7 @@ public class SettingsTest {
 //        arrange
         String json = "";
 //        assert
-        Assertions.assertThrows(ParseException.class, () -> new Settings(json));
+        Assertions.assertThrows(NullPointerException.class, () -> new Settings(json));
     }
 
     @Test
@@ -88,14 +92,14 @@ public class SettingsTest {
     }
 
     @Test
-    public void getPortTest() throws ParseException {
+    public void getPortTest() {
 //        arrange
-        String json = "[{" +
+        String json = "{" +
                 "\"port\":\"23\"," +
                 "\"pathLogFile\":\"ServerPart/src/main/resources/log.txt\"," +
                 "\"pathUsersFile\":\"ServerPart/src/main/resources/users.json\"," +
                 "\"pathUsersMessages\":\"ServerPart/src/main/resources/messages/\"" +
-                "}]";
+                "}";
         int expected = 23;
 //        act
         ISettings result = new Settings(json);
@@ -104,14 +108,14 @@ public class SettingsTest {
     }
 
     @Test
-    public void getPathLogFileTest() throws ParseException {
+    public void getPathLogFileTest() {
 //        arrange
-        String json = "[{" +
+        String json = "{" +
                 "\"port\":\"23\"," +
                 "\"pathLogFile\":\"ServerPart/src/main/resources/log.txt\"," +
                 "\"pathUsersFile\":\"ServerPart/src/main/resources/users.json\"," +
                 "\"pathUsersMessages\":\"ServerPart/src/main/resources/messages/\"" +
-                "}]";
+                "}";
         String expected = "ServerPart/src/main/resources/log.txt";
 //        act
         ISettings result = new Settings(json);
@@ -120,14 +124,14 @@ public class SettingsTest {
     }
 
     @Test
-    public void getPathUsersFileTest() throws ParseException {
+    public void getPathUsersFileTest() {
 //        arrange
-        String json = "[{" +
+        String json = "{" +
                 "\"port\":\"23\"," +
                 "\"pathLogFile\":\"ServerPart/src/main/resources/log.txt\"," +
                 "\"pathUsersFile\":\"ServerPart/src/main/resources/users.json\"," +
                 "\"pathUsersMessages\":\"ServerPart/src/main/resources/messages/\"" +
-                "}]";
+                "}";
         String expected = "ServerPart/src/main/resources/users.json";
 //        act
         ISettings result = new Settings(json);
@@ -136,14 +140,14 @@ public class SettingsTest {
     }
 
     @Test
-    public void getPathUsersMessagesTest() throws ParseException {
+    public void getPathUsersMessagesTest() {
 //        arrange
-        String json = "[{" +
+        String json = "{" +
                 "\"port\":\"23\"," +
                 "\"pathLogFile\":\"ServerPart/src/main/resources/log.txt\"," +
                 "\"pathUsersFile\":\"ServerPart/src/main/resources/users.json\"," +
                 "\"pathUsersMessages\":\"ServerPart/src/main/resources/messages/\"" +
-                "}]";
+                "}";
         String expected = "ServerPart/src/main/resources/messages/";
 //        act
         ISettings result = new Settings(json);

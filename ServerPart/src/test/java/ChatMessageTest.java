@@ -1,5 +1,5 @@
-import model.ChatMessage;
-import org.json.simple.parser.ParseException;
+import com.google.gson.JsonSyntaxException;
+import model.message.ChatMessage;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -36,7 +36,7 @@ public class ChatMessageTest {
     }
 
     @Test
-    public void getMessageFromJsonTest() throws ParseException {
+    public void getMessageFromJsonTest() {
 //        arrange
         String json = "{\"null\":\"Serg\",\"content\":\"attached to chat\",\"localDateTime\":\"2022-06-19T16:25:22.877157\"}";
         String title = null;
@@ -53,7 +53,7 @@ public class ChatMessageTest {
     @ParameterizedTest
     @MethodSource("parametersForGetMessageFromJsonWithInvalidArgumentTest")
     public void getMessageFromJsonWithInvalidArgumentTest(String json) {
-        Assertions.assertThrows(ClassCastException.class, () -> ChatMessage.getMessageFromJson(json));
+        Assertions.assertThrows(JsonSyntaxException.class, () -> ChatMessage.getMessageFromJson(json));
     }
 
     private Stream<Arguments> parametersForGetMessageFromJsonWithInvalidArgumentTest() {
@@ -67,8 +67,10 @@ public class ChatMessageTest {
     public void getMessageFromJsonWithEmptyStingTest() {
 //        arrange
         String json = "";
+//        act
+        ChatMessage result = ChatMessage.getMessageFromJson(json);
 //        assert
-        Assertions.assertThrows(ParseException.class, () -> ChatMessage.getMessageFromJson(json));
+        Assertions.assertNull(result);
     }
 
     @Test
@@ -76,11 +78,11 @@ public class ChatMessageTest {
 //        arrange
         String json = null;
 //        assert
-        Assertions.assertThrows(NullPointerException.class, () -> ChatMessage.getMessageFromJson(json));
+        Assertions.assertNull(ChatMessage.getMessageFromJson(json));
     }
 
     @Test
-    public void getTitleTest() throws ParseException {
+    public void getTitleTest() {
 //        arrange
         String expected = "title";
         ChatMessage message = ChatMessage.getMessageFromJson
@@ -92,7 +94,7 @@ public class ChatMessageTest {
     }
 
     @Test
-    public void getContentTest() throws ParseException {
+    public void getContentTest() {
 //        arrange
         String expected = "content";
         ChatMessage message = ChatMessage.getMessageFromJson
@@ -104,7 +106,7 @@ public class ChatMessageTest {
     }
 
     @Test
-    public void getDateTimeTest() throws ParseException {
+    public void getDateTimeTest() {
 //        arrange
         String expected = "localDateTime";
         ChatMessage message = ChatMessage.getMessageFromJson
@@ -116,7 +118,7 @@ public class ChatMessageTest {
     }
 
     @Test
-    public void getJsonTest() throws ParseException {
+    public void getJsonTest() {
 //        arrange
         String exspected = "{\"title\":\"title\",\"content\":\"content\",\"localDateTime\":\"localDateTime\"}";
         ChatMessage message = ChatMessage.getMessageFromJson(exspected);

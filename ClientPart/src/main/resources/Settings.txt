@@ -1,1 +1,1 @@
-[{"host":"127.0.0.1","port":"23","pathLogFile":"ClientPart/src/main/resources/log.txt"}]
+{"host":"127.0.0.1","port":"23","pathLogFile":"ClientPart/src/main/resources/log.txt"}

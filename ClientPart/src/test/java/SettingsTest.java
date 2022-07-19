@@ -1,10 +1,9 @@
-import model.Settings;
-import org.json.simple.parser.ParseException;
+import model.settings.Settings;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import services.ISettings;
+import model.settings.ISettings;
 
 import java.util.stream.Stream;
 
@@ -37,9 +36,9 @@ public class SettingsTest {
     }
 
     @Test
-    public void testGetSettingsFromJson() throws ParseException {
+    public void testGetSettingsFromJson() {
 //        arrange
-        String settingsStr = "[{\"host\":\"127.0.0.1\",\"port\":\"23\",\"pathLogFile\":\"ClientPart/src/main/resources/log.txt\"}]";
+        String settingsStr = "{\"host\":\"127.0.0.1\",\"port\":\"23\",\"pathLogFile\":\"ClientPart/src/main/resources/log.txt\"}";
         Settings expected = new Settings(23, "ClientPart/src/main/resources/log.txt", "127.0.0.1");
 //        act
         Settings result = Settings.getSettingsFromJson(settingsStr);
@@ -50,15 +49,16 @@ public class SettingsTest {
     @ParameterizedTest
     @MethodSource("parametersForTestGetSettingsFromJsonWithIncorrectInput")
     public void testGetSettingsFromJsonWithIncorrectInput(String jsonString) {
+        Settings result = Settings.getSettingsFromJson(jsonString);
 //        assert
-        Assertions.assertThrows(ParseException.class, () -> Settings.getSettingsFromJson(jsonString));
+        Assertions.assertNull(result);
     }
 
     private Stream<Arguments> parametersForTestGetSettingsFromJsonWithIncorrectInput() {
         String nullValue = null;
         return Stream.of(
-                Arguments.of(nullValue),
-                Arguments.of("")
+                Arguments.of(nullValue, nullValue),
+                Arguments.of("", nullValue)
         );
     }
 

@@ -1,4 +1,4 @@
-import model.ChatMessage;
+import model.message.ChatMessage;
 import model.User;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.*;
@@ -6,7 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
-import services.IMessage;
+import model.message.IMessage;
 
 import java.util.ArrayList;
 import java.util.List;

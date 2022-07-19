@@ -1,12 +1,16 @@
-import model.CommandsList;
-import model.UsersStorage;
+import model.message.IMessage;
+import model.settings.ISettings;
+import services.constant.CommandsList;
+import repository.storage.UsersStorage;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
-import services.*;
+import repository.logger.ILogger;
+import repository.IRepository;
+import view.IAdmin;
 
 import java.io.IOException;
 import java.util.stream.Stream;

@@ -1,7 +1,7 @@
-import model.ChatResponseFactory;
+import services.factory.ChatResponseFactory;
 import org.junit.jupiter.api.*;
-import services.IResponse;
-import services.IResponseFactory;
+import model.response.IResponse;
+import services.factory.IResponseFactory;
 
 import java.time.LocalDateTime;
 

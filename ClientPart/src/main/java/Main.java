@@ -1,14 +1,13 @@
-import model.ChatResponseFactory;
-import model.Client;
-import model.Settings;
-import org.json.simple.parser.ParseException;
-import repository.NetServer;
-import repository.ConsoleView;
-import repository.FileLogger;
-import repository.FileStorage;
-import services.ILogger;
-import services.IClient;
-import services.ISettings;
+import services.factory.ChatResponseFactory;
+import services.client.Client;
+import model.settings.Settings;
+import services.server.NetServer;
+import view.ConsoleView;
+import repository.logger.FileLogger;
+import repository.storage.FileStorage;
+import repository.logger.ILogger;
+import services.client.IClient;
+import model.settings.ISettings;
 
 import java.io.IOException;
 
@@ -23,7 +22,7 @@ public class Main {
             ILogger logger = new FileLogger(settings);
             IClient model = new Client(logger, new ConsoleView());
             new NetServer(logger, settings, model, new ChatResponseFactory()).start();
-        } catch (ParseException | IOException exception) {
+        } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
     }

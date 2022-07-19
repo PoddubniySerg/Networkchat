@@ -1,10 +1,14 @@
-import model.*;
-import org.json.simple.parser.ParseException;
-import repository.server.ChatServer;
-import repository.ConsoleAdmin;
-import repository.FileLogger;
-import repository.FileRepository;
-import services.*;
+import model.settings.ISettings;
+import model.settings.Settings;
+import repository.*;
+import repository.logger.FileLogger;
+import repository.logger.ILogger;
+import repository.storage.IStorage;
+import repository.storage.UsersStorage;
+import services.factory.MessageHandlerFactory;
+import services.server.ChatServer;
+import view.ConsoleAdmin;
+import view.IAdmin;
 
 import java.io.IOException;
 
@@ -19,7 +23,7 @@ public class Main {
             ILogger logger = new FileLogger(settings);
             IStorage storage = new UsersStorage(logger, repository, settings, admin);
             new ChatServer(new MessageHandlerFactory(), settings, logger, storage, admin).start();
-        } catch (IOException | ParseException exception) {
+        } catch (IOException exception) {
             exception.printStackTrace();
         }
     }

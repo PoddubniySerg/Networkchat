@@ -1,7 +1,10 @@
-import model.Client;
+import model.response.IResponse;
+import repository.logger.ILogger;
+import services.client.Client;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
-import services.*;
+import services.server.IServer;
+import view.IView;
 
 import java.io.IOException;
 

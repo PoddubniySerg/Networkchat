@@ -1,8 +1,7 @@
 package repository;
 
-import model.CommandsList;
-import services.ISettings;
-import services.IRepository;
+import services.constant.CommandsList;
+import model.settings.ISettings;
 
 import java.io.IOException;
 import java.nio.file.Files;

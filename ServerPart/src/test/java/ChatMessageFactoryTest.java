@@ -1,6 +1,6 @@
-import model.ChatMessageFactory;
+import services.factory.ChatMessageFactory;
 import org.junit.jupiter.api.*;
-import services.IMessage;
+import model.message.IMessage;
 
 public class ChatMessageFactoryTest {
 
